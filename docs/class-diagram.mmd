@@ -1,0 +1,104 @@
+classDiagram
+direction TB
+class Person {
+  <<abstract>>
+  -String idNumber
+  -String name
+  -String gender
+  -String phone
+  -String address
+  +getDetails() String*
+  +toString() String
+}
+class Author {
+  -int noOfBooks
+  -String email
+  -String workplace
+  +getDetails() String
+  +toString() String
+}
+class Student {
+  -String studentId
+  -String specialization
+  -String enrolledDate
+  -double budget
+  +setBudget(double budget) void
+  +getDetails() String
+  +toString() String
+}
+class Category {
+  -String categoryId
+  -String name
+  +toString() String
+}
+class Book {
+  -String bookId
+  -String name
+  -Category category
+  -Author author
+  -String publisher
+  -int editionYear
+  -double price
+  -int quantity
+  +setPrice(double price) void
+  +setQuantity(int quantity) void
+  +toString() String
+}
+class Process {
+  -ArrayList~Book~ books
+  -ArrayList~Student~ students
+  -ArrayList~Category~ categories
+  -Path dataFile
+  +Process()
+  +Process(Path dataFile)
+  +addBook(Book book) void
+  +deleteBookById(String id) boolean
+  +searchBookById(String id) Book
+  +searchBook(String keyword) Book
+  +buyBook(String bookId, String studentId) boolean
+  +addStudent(Student student) void
+  +searchStudent(String id) Student
+  +addCategory(Category category) void
+  +searchCategoryById(String id) Category
+  +saveToFile() void
+  +loadFromFile() void
+  +fullReport() String
+}
+class LibraryManagementSys {
+  +main(String[] args) void$
+  -printMenu() void$
+  -readNonEmpty(Scanner input, String message) String$
+  -readIntRange(Scanner input, String message, int min, int max) int$
+  -readDoubleMin(Scanner input, String message, double min) double$
+  -saveOnEnd(Process process) void$
+}
+class Validation {
+  <<package-private utility>>
+  ~required(String value, String label) String$
+  ~money(double value, String label) double$
+  ~range(int value, int min, int max, String label) int$
+}
+class Serializable {
+  <<interface>>
+}
+Person <|-- Author
+Person <|-- Student
+Serializable <|.. Person
+Serializable <|.. Book
+Serializable <|.. Category
+Book "0..*" o-- "1" Author : references
+Book "0..*" o-- "1" Category : references
+Process "1" o-- "0..*" Book : manages
+Process "1" o-- "0..*" Student : manages
+Process "1" o-- "0..*" Category : manages
+LibraryManagementSys ..> Process : console operations
+Process ..> Validation : validates records
+Book ..> Validation : validates fields
+Person ..> Validation : validates fields
+Student ..> Validation : validates fields
+Author ..> Validation : validates fields
+Category ..> Validation : validates fields
+note for Book "Every inserted book requires one author and an existing category."
+note for Process "Collection getters return copies. Objects remain mutable.\nPersists all lists using a versioned file and atomic replacement."
+note for Validation "Rejects blank required text, out-of-range integers, and negative/non-finite money."
+note for Person "Constructors, ordinary getters/setters, and serialVersionUID fields are omitted for readability."
